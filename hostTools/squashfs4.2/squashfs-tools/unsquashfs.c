@@ -29,7 +29,6 @@
 #include "compressor.h"
 #include "xattr.h"
 
-#include <sys/sysinfo.h>
 #include <sys/types.h>
 
 struct cache *fragment_cache, *data_cache;
@@ -118,6 +117,7 @@ void update_progress_bar();
 
 void sigwinch_handler()
 {
+#ifndef __CYGWIN__
 	struct winsize winsize;
 
 	if(ioctl(1, TIOCGWINSZ, &winsize) == -1) {
@@ -127,6 +127,9 @@ void sigwinch_handler()
 		columns = 80;
 	} else
 		columns = winsize.ws_col;
+#else
+	columns = 80;
+#endif
 }
 
 
@@ -1460,10 +1463,12 @@ int read_super(char *source)
 	 */
 	read_fs_bytes(fd, SQUASHFS_START, sizeof(struct squashfs_super_block),
 		&sBlk_4);
-	swap = sBlk_4.s_magic != SQUASHFS_MAGIC;
+	swap = (sBlk_4.s_magic != SQUASHFS_MAGIC &&
+		sBlk_4.s_magic != SQUASHFS_MAGIC_LZMA);
 	SQUASHFS_INSWAP_SUPER_BLOCK(&sBlk_4);
 
-	if(sBlk_4.s_magic == SQUASHFS_MAGIC && sBlk_4.s_major == 4 &&
+	if((sBlk_4.s_magic == SQUASHFS_MAGIC || 
+	   sBlk_4.s_magic == SQUASHFS_MAGIC_LZMA) && sBlk_4.s_major == 4 &&
 			sBlk_4.s_minor == 0) {
 		s_ops.squashfs_opendir = squashfs_opendir_4;
 		s_ops.read_fragment = read_fragment_4;
@@ -1476,7 +1481,11 @@ int read_super(char *source)
 		/*
 		 * Check the compression type
 		 */
-		comp = lookup_compressor_id(sBlk.s.compression);
+		if (sBlk_4.s_magic == SQUASHFS_MAGIC_LZMA)
+			comp = lookup_compressor("lzma");
+		else
+			comp = lookup_compressor_id(sBlk.s.compression);
+
 		return TRUE;
 	}
 
@@ -1491,8 +1500,10 @@ int read_super(char *source)
 	 * Check it is a SQUASHFS superblock
 	 */
 	swap = 0;
-	if(sBlk_3.s_magic != SQUASHFS_MAGIC) {
-		if(sBlk_3.s_magic == SQUASHFS_MAGIC_SWAP) {
+	if(sBlk_3.s_magic != SQUASHFS_MAGIC && 
+			sBlk_3.s_magic != SQUASHFS_MAGIC_LZMA) {
+		if(sBlk_3.s_magic == SQUASHFS_MAGIC_SWAP || 
+				sBlk_3.s_magic == SQUASHFS_MAGIC_LZMA_SWAP) {
 			squashfs_super_block_3 sblk;
 			ERROR("Reading a different endian SQUASHFS filesystem "
 				"on %s\n", source);
@@ -1570,7 +1581,11 @@ int read_super(char *source)
 	/*
 	 * 1.x, 2.x and 3.x filesystems use gzip compression.
 	 */
-	comp = lookup_compressor("gzip");
+	if (sBlk.s.s_magic == SQUASHFS_MAGIC_LZMA)
+		comp = lookup_compressor("lzma");
+	else
+		comp = lookup_compressor("gzip");
+
 	return TRUE;
 
 failed_mount:
@@ -1808,7 +1823,9 @@ void initialise_threads(int fragment_buffer_size, int data_buffer_size)
 	if(sigprocmask(SIG_BLOCK, &sigmask, &old_mask) == -1)
 		EXIT_UNSQUASH("Failed to set signal mask in intialise_threads"
 			"\n");
-
+#ifdef __CYGWIN__
+	processors = atoi(getenv("NUMBER_OF_PROCESSORS"));
+#else
 	if(processors == -1) {
 #ifndef linux
 		int mib[2];
@@ -1830,6 +1847,7 @@ void initialise_threads(int fragment_buffer_size, int data_buffer_size)
 		processors = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 	}
+#endif /* __CYGWIN__ */
 
 	thread = malloc((3 + processors) * sizeof(pthread_t));
 	if(thread == NULL)

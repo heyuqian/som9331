@@ -32,6 +32,9 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <sys/time.h>
+#if defined(__OpenBSD__)
+#include <sys/param.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -51,13 +54,24 @@
 #include <sys/wait.h>
 
 #ifndef linux
+#ifndef __CYGWIN__
 #define __BYTE_ORDER BYTE_ORDER
 #define __BIG_ENDIAN BIG_ENDIAN
 #define __LITTLE_ENDIAN LITTLE_ENDIAN
 #include <sys/sysctl.h>
+#endif /* __CYGWIN__ */
 #else
 #include <endian.h>
 #include <sys/sysinfo.h>
+#endif
+
+#ifdef __CYGWIN__
+#include <sys/termios.h>
+#define FNM_EXTMATCH  (1 << 5)
+#endif
+
+#ifndef FNM_EXTMATCH
+#define FNM_EXTMATCH 0
 #endif
 
 #ifdef SQUASHFS_TRACE
@@ -160,6 +174,9 @@ unsigned int cache_bytes = 0, cache_size = 0, inode_count = 0;
 
 /* inode lookup table */
 squashfs_inode *inode_lookup_table = NULL;
+
+/* override all timestamps */
+time_t fixed_time = -1;
 
 /* in memory directory data */
 #define I_COUNT_SIZE		128
@@ -721,13 +738,13 @@ void cache_block_put(struct file_buffer *entry)
 			+ (((char *)A) - data_cache)))
 
 
-inline void inc_progress_bar()
+static inline void inc_progress_bar()
 {
 	cur_uncompressed ++;
 }
 
 
-inline void update_progress_bar()
+static inline void update_progress_bar()
 {
 	pthread_mutex_lock(&progress_mutex);
 	pthread_cond_signal(&progress_wait);
@@ -735,7 +752,7 @@ inline void update_progress_bar()
 }
 
 
-inline void waitforthread(int i)
+static inline void waitforthread(int i)
 {
 	TRACE("Waiting for thread %d\n", i);
 	while(thread[i] != 0)
@@ -840,6 +857,7 @@ void sigusr1_handler()
 
 void sigwinch_handler()
 {
+#ifndef __CYGWIN__
 	struct winsize winsize;
 
 	if(ioctl(1, TIOCGWINSZ, &winsize) == -1) {
@@ -849,6 +867,9 @@ void sigwinch_handler()
 		columns = 80;
 	} else
 		columns = winsize.ws_col;
+#else
+	columns = 80;
+#endif
 }
 
 
@@ -2434,6 +2455,8 @@ again:
 restat:
 	fstat(file, &buf2);
 	close(file);
+	if (fixed_time != -1)
+		buf2.st_mtime = fixed_time;
 	if(read_size != buf2.st_size) {
 		memcpy(buf, &buf2, sizeof(struct stat));
 		file_buffer->error = 2;
@@ -3340,7 +3363,7 @@ struct inode_info *lookup_inode(struct stat *buf)
 }
 
 
-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
+static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
 	struct inode_info *inode_info, struct dir_info *dir)
 {
 	if((dir->count % DIR_ENTRIES) == 0) {
@@ -3594,7 +3617,7 @@ void dir_scan(squashfs_inode *inode, char *pathname,
 		buf.st_mode = S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR;
 		buf.st_uid = getuid();
 		buf.st_gid = getgid();
-		buf.st_mtime = time(NULL);
+		buf.st_mtime = fixed_time != -1 ? fixed_time : time(NULL);
 		buf.st_dev = 0;
 		buf.st_ino = 0;
 		dir_ent->inode = lookup_inode(&buf);
@@ -3605,6 +3628,8 @@ void dir_scan(squashfs_inode *inode, char *pathname,
 				pathname, strerror(errno));
 			return;
 		}
+		if(fixed_time != -1)
+			buf.st_mtime = fixed_time;
 		dir_ent->inode = lookup_inode(&buf);
 	}
 
@@ -3659,6 +3684,8 @@ struct dir_info *dir_scan1(char *pathname, struct pathnames *paths,
 				filename, strerror(errno));
 			continue;
 		}
+		if(fixed_time != -1)
+			buf.st_mtime = fixed_time;
 
 		if((buf.st_mode & S_IFMT) != S_IFREG &&
 			(buf.st_mode & S_IFMT) != S_IFDIR &&
@@ -3777,7 +3804,7 @@ struct dir_info *dir_scan2(struct dir_info *dir, struct pseudo *pseudo)
 		buf.st_gid = pseudo_ent->dev->gid;
 		buf.st_rdev = makedev(pseudo_ent->dev->major,
 			pseudo_ent->dev->minor);
-		buf.st_mtime = time(NULL);
+		buf.st_mtime = fixed_time != -1 ? fixed_time : time(NULL);
 		buf.st_ino = pseudo_ino ++;
 
 		if(pseudo_ent->dev->type == 'f') {
@@ -4062,6 +4089,9 @@ void initialise_threads(int readb_mbytes, int writeb_mbytes,
 
 	signal(SIGUSR1, sigusr1_handler);
 
+#ifdef __CYGWIN__
+	processors = atoi(getenv("NUMBER_OF_PROCESSORS"));
+#else
 	if(processors == -1) {
 #ifndef linux
 		int mib[2];
@@ -4083,6 +4113,7 @@ void initialise_threads(int readb_mbytes, int writeb_mbytes,
 		processors = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 	}
+#endif /* __CYGWIN__ */
 
 	thread = malloc((2 + processors * 2) * sizeof(pthread_t));
 	if(thread == NULL)
@@ -4652,6 +4683,15 @@ int main(int argc, char *argv[])
 			progress = FALSE;
 		else if(strcmp(argv[i], "-no-exports") == 0)
 			exportable = FALSE;
+		else if(strcmp(argv[i], "-fixed-time") == 0) {
+			if((++i == argc) || (fixed_time =
+					strtoll(argv[i], &b, 10), *b != '\0')) {
+				ERROR("%s: -fixed-time missing or invalid "
+					"timestamp\n", argv[0]);
+
+				exit(1);
+			}
+		}
 		else if(strcmp(argv[i], "-processors") == 0) {
 			if((++i == argc) || (processors =
 					strtol(argv[i], &b, 10), *b != '\0')) {
@@ -5292,7 +5332,7 @@ printOptions:
 	sBlk.flags = SQUASHFS_MKFLAGS(noI, noD, noF, noX, no_fragments,
 		always_use_fragments, duplicate_checking, exportable,
 		no_xattrs, comp_opts);
-	sBlk.mkfs_time = time(NULL);
+	sBlk.mkfs_time = fixed_time != -1 ? fixed_time : time(NULL);
 
 restore_filesystem:
 	if(progress && estimated_uncompressed) {

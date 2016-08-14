@@ -25,6 +25,9 @@
 #define TRUE 1
 #define FALSE 0
 #include <stdio.h>
+#if defined(__OpenBSD__)
+#include <sys/param.h>
+#endif
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -46,11 +49,24 @@
 #include <sys/time.h>
 
 #ifndef linux
+#ifndef __CYGWIN__
 #define __BYTE_ORDER BYTE_ORDER
 #define __BIG_ENDIAN BIG_ENDIAN
 #define __LITTLE_ENDIAN LITTLE_ENDIAN
+#include <sys/sysctl.h>
+#endif
 #else
 #include <endian.h>
+#include <sys/sysinfo.h>
+#endif
+
+#ifdef __CYGWIN__
+#include <sys/termios.h>
+#define FNM_EXTMATCH  (1 << 5)
+#endif
+
+#ifndef FNM_EXTMATCH
+#define FNM_EXTMATCH 0
 #endif
 
 #include "squashfs_fs.h"

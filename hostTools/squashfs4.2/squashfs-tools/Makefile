@@ -26,7 +26,7 @@ GZIP_SUPPORT = 1
 # To build using XZ Utils liblzma - install the library and uncomment
 # the XZ_SUPPORT line below.
 #
-#XZ_SUPPORT = 1
+XZ_SUPPORT = 1
 
 
 ############ Building LZO support ##############
@@ -67,7 +67,8 @@ GZIP_SUPPORT = 1
 # in Mksquashfs.  Obviously the compression algorithm must have been
 # selected to be built
 #
-COMP_DEFAULT = gzip
+#COMP_DEFAULT = gzip
+COMP_DEFAULT = xz
 
 ###############################################
 #  Extended attribute (XATTRs) build options  #
@@ -129,7 +130,6 @@ ifeq ($(LZMA_XZ_SUPPORT),1)
 CFLAGS += -DLZMA_SUPPORT
 MKSQUASHFS_OBJS += lzma_xz_wrapper.o
 UNSQUASHFS_OBJS += lzma_xz_wrapper.o
-LIBS += -llzma
 COMPRESSORS += lzma
 endif
 
@@ -137,8 +137,18 @@ ifeq ($(XZ_SUPPORT),1)
 CFLAGS += -DXZ_SUPPORT
 MKSQUASHFS_OBJS += xz_wrapper.o
 UNSQUASHFS_OBJS += xz_wrapper.o
-LIBS += -llzma
 COMPRESSORS += xz
+endif
+
+ifneq ($(LZMA_XZ_SUPPORT)$(XZ_SUPPORT),)
+MKSQUASHFS_OBJS += lzma_xz_options.o
+UNSQUASHFS_OBJS += lzma_xz_options.o
+ifneq ($(LZMA_LIB),)
+MKSQUASHFS_OBJS += $(LZMA_LIB)
+UNSQUASHFS_OBJS += $(LZMA_LIB)
+else
+LIBS += -llzma
+endif
 endif
 
 ifeq ($(LZO_SUPPORT),1)
