@@ -1,4 +1,4 @@
-BUILD_SET = mksquashfs lzma
+BUILD_SET = mksquashfs lzma mktplinkfw patch-cmdline
 #DL = /home/vagrant/dl
 
 .PHONY: $(BUILD_SET)
@@ -24,5 +24,22 @@ lzma_clean:
 	@echo clean lzma host tool ...
 	make -C lzma-4.32/C/7zip/Compress/LZMA_Alone/ -f makefile.gcc clean
 
-clean: mksquashfs_clean lzma_clean
-	
+mktplinkfw:
+	@echo building mktplinkfw host tool ...
+	make -C mktplinkfw/
+	cp mktplinkfw/mktplinkfw ./bin/
+
+mktplinkfw_clean:
+	@echo clean mktplinkfw host tool ...
+	make -C mktplinkfw/ clean
+
+patch-cmdline:
+	@echo building patch-cmdline host tool ...
+	make -C patch-cmdline/
+	cp patch-cmdline/patch-cmdline ./bin/
+
+patch-cmdline_clean:
+	@echo clean patch-cmdline host tool ...
+	make -C patch-cmdline/ clean
+
+clean: mksquashfs_clean lzma_clean mktplinkfw_clean patch-cmdline_clean
