@@ -1,4 +1,4 @@
-BUILD_SET = mksquashfs
+BUILD_SET = mksquashfs lzma
 #DL = /home/vagrant/dl
 
 .PHONY: $(BUILD_SET)
@@ -14,5 +14,15 @@ mksquashfs_clean:
 	@echo clean mksquashfs host tool ...
 	make -C squashfs4.2/squashfs-tools/ clean
 
-clean: mksquashfs_clean
+lzma:
+	@echo building lzma host tool ...
+	#tar -jxvf $(DL)/lzma-4.32.tar.bz2 -C ./ 2> /dev/null
+	make -C lzma-4.32/C/7zip/Compress/LZMA_Alone/ -f makefile.gcc
+	cp lzma-4.32/C/7zip/Compress/LZMA_Alone/lzma ./bin/
+
+lzma_clean:
+	@echo clean lzma host tool ...
+	make -C lzma-4.32/C/7zip/Compress/LZMA_Alone/ -f makefile.gcc clean
+
+clean: mksquashfs_clean lzma_clean
 	
