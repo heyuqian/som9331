@@ -39,7 +39,12 @@ kernel:
 
 	if [ ! -d $(KERNEL_DIR)/$(KERNEL_VER) ];then \
 		tar -Jxvf $(DL_DIR)/$(KERNEL_VER).tar.xz -C $(KERNEL_DIR) ;\
+		ln -s $(KERNEL_DIR)/$(KERNEL_VER) $(KERNEL_DIR)/linux ;\
 	fi
+
+	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
+	cp patches/dev-m25p80.h kernel/linux/arch/mips/ath79/
+	cp patches/dev-m25p80.c kernel/linux/arch/mips/ath79/
 
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
