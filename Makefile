@@ -45,8 +45,11 @@ kernel:
 	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
 	cp patches/dev-m25p80.h kernel/linux/arch/mips/ath79/
 	cp patches/dev-m25p80.c kernel/linux/arch/mips/ath79/
+	cp patches/dev-eth.h kernel/linux/arch/mips/ath79/
+	cp patches/dev-eth.c kernel/linux/arch/mips/ath79/
 	cp patches/ath79_Kconfig  kernel/linux/arch/mips/ath79/Kconfig
 	cp patches/ath79_Makefile kernel/linux/arch/mips/ath79/Makefile
+	cp patches/som9331_config kernel/linux/.config
 
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
