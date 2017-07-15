@@ -1,21 +1,9 @@
-CROSS_COMPILE		:= /opt/toolchains/OpenWrt-Toolchain-ar71xx-for-mips_34kc-gcc-4.8-linaro_uClibc-0.9.33.2/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin/mips-openwrt-linux-
+export CROSS_COMPILE=/opt/toolchains/OpenWrt-Toolchain-ar71xx-for-mips_34kc-gcc-4.8-linaro_uClibc-0.9.33.2/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin/mips-openwrt-linux-
+export ARCH=mips
+
 CFLAGS			+=
 LDFLAGS			+=
 
-AR			:= $(CROSS_COMPILE)ar 
-AS			:= $(CROSS_COMPILE)as 
-LD			:= $(CROSS_COMPILE)ld 
-NM			:= $(CROSS_COMPILE)nm 
-CC			:= $(CROSS_COMPILE)gcc
-GCC			:= $(CROSS_COMPILE)gcc
-CXX			:= $(CROSS_COMPILE)g++
-CPP			:= $(CROSS_COMPILE)cpp 
-RANLIB			:= $(CROSS_COMPILE)ranlib 
-STRIP			:= $(CROSS_COMPILE)strip 
-SSTRIP			:= $(CROSS_COMPILE)sstrip
-OBJCOPY			:= $(CROSS_COMPILE)objcopy 
-OBJDUMP			:= $(CROSS_COMPILE)objdump
-GDB			:= $(CROSS_COMPILE)gdb
 
 KERNEL_VER              := linux-3.10.49
 TOP_DIR			:= $(shell pwd)
@@ -26,6 +14,8 @@ HOST_TOOLS_DIR		:= $(TOP_DIR)/hostTools/bin
 ROOTFS_DIR		:= $(TOP_DIR)/rootfs
 
 IMAGE_NAME		:= som9331-squashfs-sysupgrade.bin
+
+export STAGING_DIR=$(BUILD_DIR)/staging
 
 .PHONY: kernel image
 
@@ -42,7 +32,7 @@ kernel:
 		ln -s $(KERNEL_DIR)/$(KERNEL_VER) $(KERNEL_DIR)/linux ;\
 	fi
 
-	mkdir -p $(KERNEL_DIR)/STAGING_DIR
+	mkdir -p $(STAGING_DIR)
 	#mkdir -p $(KERNEL_DIR)/linux/arch/mips/include/asm/mach-ath79
 
 	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
@@ -59,6 +49,13 @@ kernel:
 
 	cp patches/flash.h kernel/linux/include/linux/spi/flash.h
 	cp patches/ath79_machtypes.h kernel/linux/arch/mips/ath79/machtypes.h
+	cp patches/ath79_spi_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/ath79_spi_platform.h 
+	cp patches/spi-ath79.c kernel/linux/drivers/spi/spi-ath79.c
+	cp patches/spi.h kernel/linux/include/linux/spi/spi.h
+	cp patches/spi-bitbang.c kernel/linux/drivers/spi/
+	cp patches/spi_bitbang.h kernel/linux/include/linux/spi/spi_bitbang.h
+
+	make -C $(KERNEL_DIR)/linux
 
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)

@@ -137,6 +137,9 @@ config ATH79_DEV_SPI
 config ATH79_DEV_USB
 	def_bool n
 
+config ATH79_DEV_M25P80
+	def_bool n
+
 config ATH79_DEV_WMAC
 	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA955X)
 	def_bool n
