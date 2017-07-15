@@ -57,6 +57,9 @@ kernel:
 	cp patches/ag71xx_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/
 	cp patches/ar71xx_regs.h kernel/linux/arch/mips/include/asm/mach-ath79/
 
+	cp patches/flash.h kernel/linux/include/linux/spi/flash.h
+	cp patches/ath79_machtypes.h kernel/linux/arch/mips/ath79/machtypes.h
+
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
 	cp -rf $(KERNEL_DIR)/vmlinux $(BUILD_DIR)/vmlinux 

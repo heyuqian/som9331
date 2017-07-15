@@ -86,7 +86,7 @@ static struct gpio_keys_button som9331_gpio_keys[] __initdata = {
 static void __init som9331_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	//u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
 
 	ath79_setup_ar933x_phy4_switch(true, true);
 
@@ -116,7 +116,8 @@ static void __init som9331_setup(void)
 	/* WAN port */
 	ath79_register_eth(0);
 
-	ath79_register_wmac(ee, mac);
+	//ath79_register_wmac(ee, mac);//heyuqian
+	ath79_register_wmac(mac);
 }
 
 MIPS_MACHINE(ATH79_MACH_SOM9331, "SOM9331", "OpenEmbed SOM9331",
