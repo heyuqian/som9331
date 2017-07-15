@@ -42,6 +42,9 @@ kernel:
 		ln -s $(KERNEL_DIR)/$(KERNEL_VER) $(KERNEL_DIR)/linux ;\
 	fi
 
+	mkdir -p $(KERNEL_DIR)/STAGING_DIR
+	#mkdir -p $(KERNEL_DIR)/linux/arch/mips/include/asm/mach-ath79
+
 	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
 	cp patches/dev-m25p80.h kernel/linux/arch/mips/ath79/
 	cp patches/dev-m25p80.c kernel/linux/arch/mips/ath79/
@@ -50,6 +53,9 @@ kernel:
 	cp patches/ath79_Kconfig  kernel/linux/arch/mips/ath79/Kconfig
 	cp patches/ath79_Makefile kernel/linux/arch/mips/ath79/Makefile
 	cp patches/som9331_config kernel/linux/.config
+
+	cp patches/ag71xx_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/
+	cp patches/ar71xx_regs.h kernel/linux/arch/mips/include/asm/mach-ath79/
 
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
