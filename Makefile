@@ -4,6 +4,20 @@ export ARCH=mips
 CFLAGS			+=
 LDFLAGS			+=
 
+export AR=$(CROSS_COMPILE)ar
+export AS=$(CROSS_COMPILE)as
+export LD=$(CROSS_COMPILE)ld
+export NM=$(CROSS_COMPILE)nm
+export CC=$(CROSS_COMPILE)gcc
+export GCC=$(CROSS_COMPILE)gcc
+export CXX=$(CROSS_COMPILE)g++
+export CPP=$(CROSS_COMPILE)cpp
+export RANLIB=$(CROSS_COMPILE)ranlib
+export STRIP=$(CROSS_COMPILE)strip
+export SSTRIP=$(CROSS_COMPILE)sstrip
+export OBJCOPY=$(CROSS_COMPILE)objcopy
+export OBJDUMP=$(CROSS_COMPILE)objdump
+export GDB=$(CROSS_COMPILE)gdb
 
 KERNEL_VER              := linux-3.10.49
 TOP_DIR			:= $(shell pwd)
@@ -57,9 +71,13 @@ kernel:
 
 	make -C $(KERNEL_DIR)/linux
 
+tools:
+	make -C $(HOST_TOOLS_DIR)/../ all
+
+
 image:
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
-	cp -rf $(KERNEL_DIR)/vmlinux $(BUILD_DIR)/vmlinux 
+	cp -rf $(KERNEL_DIR)/linux/vmlinux $(BUILD_DIR)/vmlinux 
 
 	$(OBJCOPY) -O binary -R .reginfo -R .notes -R .note -R .comment -R .mdebug -R .note.gnu.build-id -S  $(BUILD_DIR)/vmlinux  $(BUILD_DIR)/vmlinux
 
