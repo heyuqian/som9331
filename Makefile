@@ -74,6 +74,9 @@ kernel:
 	cp patches/mtd_Makefile kernel/linux/drivers/mtd/Makefile
 	cp patches/mtd_Kconfig kernel/linux/drivers/mtd/Kconfig
 	cp patches/mtdsplit* kernel/linux/drivers/mtd/
+	cp patches/mtd.h kernel/linux/include/linux/mtd/mtd.h
+	cp patches/mtdpart.c kernel/linux/drivers/mtd/mtdpart.c
+	cp patches/partitions.h kernel/linux/include/linux/mtd/partitions.h
 
 	make -C $(KERNEL_DIR)/linux
 
