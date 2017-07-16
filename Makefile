@@ -69,6 +69,11 @@ kernel:
 	cp patches/spi-bitbang.c kernel/linux/drivers/spi/
 	cp patches/spi_bitbang.h kernel/linux/include/linux/spi/spi_bitbang.h
 
+	#mtd
+	cp patches/tplinkpart.c kernel/linux/drivers/mtd/
+	cp patches/mtd_Makefile kernel/linux/drivers/mtd/Makefile
+	cp patches/mtd_Kconfig kernel/linux/drivers/mtd/Kconfig
+
 	make -C $(KERNEL_DIR)/linux
 
 tools:
