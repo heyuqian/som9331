@@ -36,7 +36,7 @@
 #define SOM9331_KEYS_DEBOUNCE_INTERVAL	(3 * SOM9331_KEYS_POLL_INTERVAL)
 
 static const char *som9331_part_probes[] = {
-	"som9331",
+	"tp-link",
 	NULL,
 };
 

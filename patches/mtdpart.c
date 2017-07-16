@@ -905,11 +905,13 @@ static struct mtd_part_parser *get_partition_parser(const char *name)
 	spin_lock(&part_parser_lock);
 
 	list_for_each_entry(p, &part_parsers, list)
+	{
+		printk(KERN_NOTICE "get_partition_parser %s %s\n", name, p->name);
 		if (!strcmp(p->name, name) && try_module_get(p->owner)) {
 			ret = p;
 			break;
 		}
-
+	}
 	spin_unlock(&part_parser_lock);
 
 	return ret;
