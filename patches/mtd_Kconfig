@@ -50,10 +50,6 @@ config MTD_SPLIT_SQUASHFS_ROOT
 
 comment "Firmware partition parsers"
 
-config MTD_SPLIT_SEAMA_FW
-	bool "Seama firmware parser"
-	select MTD_SPLIT
-
 config MTD_SPLIT_UIMAGE_FW
 	bool "uImage based firmware partition parser"
 	select MTD_SPLIT
@@ -211,28 +207,6 @@ config MTD_BCM47XX_PARTS
 	help
 	  This provides partitions parser for devices based on BCM47xx
 	  boards.
-
-config MTD_WRT160NL_PARTS
-	tristate "Linksys WRT160NL partitioning support"
-	depends on ATH79_MACH_WRT160NL
-	---help---
-	   Linksys WRT160NL partitioning support
-
-config MTD_MYLOADER_PARTS
-	tristate "MyLoader partition parsing"
-	depends on ADM5120 || ATHEROS_AR231X || ATHEROS_AR71XX || ATH79
-	---help---
-	  MyLoader is a bootloader which allows the user to define partitions
-	  in flash devices, by putting a table in the second erase block
-	  on the device, similar to a partition table. This table gives the 
-	  offsets and lengths of the user defined partitions.
-
-	  If you need code which can detect and parse these tables, and
-	  register MTD 'partitions' corresponding to each image detected,
-	  enable this option.
-
-	  You will still need the parsing functions to be called by the driver
-	  for your particular device. It won't happen automatically.
 
 config MTD_TPLINK_PARTS
 	tristate "TP-Link AR7XXX/AR9XXX partitioning support"

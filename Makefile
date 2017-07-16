@@ -73,6 +73,7 @@ kernel:
 	cp patches/tplinkpart.c kernel/linux/drivers/mtd/
 	cp patches/mtd_Makefile kernel/linux/drivers/mtd/Makefile
 	cp patches/mtd_Kconfig kernel/linux/drivers/mtd/Kconfig
+	cp patches/mtdsplit* kernel/linux/drivers/mtd/
 
 	make -C $(KERNEL_DIR)/linux
 
