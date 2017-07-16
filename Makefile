@@ -50,6 +50,7 @@ kernel:
 	#mkdir -p $(KERNEL_DIR)/linux/arch/mips/include/asm/mach-ath79
 
 	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
+	cp patches/setup.c kernel/linux/arch/mips/ath79/setup.c 
 	cp patches/dev-m25p80.h kernel/linux/arch/mips/ath79/
 	cp patches/dev-m25p80.c kernel/linux/arch/mips/ath79/
 	cp patches/dev-eth.h kernel/linux/arch/mips/ath79/
@@ -67,6 +68,7 @@ kernel:
 	cp patches/spi-ath79.c kernel/linux/drivers/spi/spi-ath79.c
 	cp patches/spi.h kernel/linux/include/linux/spi/spi.h
 	cp patches/spi-bitbang.c kernel/linux/drivers/spi/
+	cp patches/spi-gpio.c kernel/linux/drivers/spi/spi-gpio.c
 	cp patches/spi_bitbang.h kernel/linux/include/linux/spi/spi_bitbang.h
 
 	#mtd
