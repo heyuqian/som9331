@@ -78,8 +78,10 @@ kernel:
 	cp patches/mtdsplit* kernel/linux/drivers/mtd/
 	cp patches/mtd.h kernel/linux/include/linux/mtd/mtd.h
 	cp patches/mtdpart.c kernel/linux/drivers/mtd/mtdpart.c
+	cp patches/mtdcore.c kernel/linux/drivers/mtd/mtdcore.c
 	cp patches/partitions.h kernel/linux/include/linux/mtd/partitions.h
 	cp patches/m25p80.c kernel/linux/drivers/mtd/devices/m25p80.c
+	cp patches/xz_wrapper.c kernel/linux/fs/squashfs/xz_wrapper.c
 
 	make -C $(KERNEL_DIR)/linux
 
