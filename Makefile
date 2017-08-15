@@ -38,15 +38,21 @@ export STAGING_DIR=$(BUILD_DIR)/staging
 busybox:
 	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER) ];then \
 		echo $(BUSYBOX_DIR) do not exist! ;\
-                if [ ! -f $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 ]; then \
-                        wget -P $(DL_DIR) http://busybox.net/downloads/$(BUSYBOX_VER).tar.bz2; \
-                fi \
+		if [ ! -f $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 ]; then \
+				wget -P $(DL_DIR) http://busybox.net/downloads/$(BUSYBOX_VER).tar.bz2; \
+		fi \
 	fi
          
 	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER) ];then \
-                tar -jxvf $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 -C $(BUSYBOX_DIR) ;\
-                ln -s $(BUSYBOX_DIR)/$(BUSYBOX_VER) $(BUSYBOX_DIR)/busybox ;\
-        fi
+		tar -jxvf $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 -C $(BUSYBOX_DIR) ;\
+		ln -s $(BUSYBOX_DIR)/$(BUSYBOX_VER) $(BUSYBOX_DIR)/busybox ;\
+		cp patches/busybox_config $(BUSYBOX_DIR)/busybox/.config;\
+	fi
+
+	make -C $(BUSYBOX_DIR)/busybox/
+	make -C $(BUSYBOX_DIR)/busybox/ install
+	
+	cp -rf $(BUSYBOX_DIR)/busybox/_install/* $(ROOTFS_DIR)
 
 kernel:
 	if [ ! -d $(KERNEL_DIR)/$(KERNEL_VER) ];then \
@@ -63,7 +69,7 @@ kernel:
 
 	mkdir -p $(STAGING_DIR)
 	#mkdir -p $(KERNEL_DIR)/linux/arch/mips/include/asm/mach-ath79
-
+	
 	cp patches/mach-som9331.c kernel/linux/arch/mips/ath79/
 	cp patches/setup.c kernel/linux/arch/mips/ath79/setup.c 
 	cp patches/dev-m25p80.h kernel/linux/arch/mips/ath79/
@@ -79,7 +85,7 @@ kernel:
 
 	cp patches/flash.h kernel/linux/include/linux/spi/flash.h
 	cp patches/ath79_machtypes.h kernel/linux/arch/mips/ath79/machtypes.h
-	cp patches/ath79_spi_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/ath79_spi_platform.h 
+	cp patches/ath79_spi_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/ath79_spi_platform.h  
 	cp patches/spi-ath79.c kernel/linux/drivers/spi/spi-ath79.c
 	cp patches/spi.h kernel/linux/include/linux/spi/spi.h
 	cp patches/spi-bitbang.c kernel/linux/drivers/spi/
