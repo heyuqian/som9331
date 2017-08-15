@@ -20,8 +20,10 @@ export OBJDUMP=$(CROSS_COMPILE)objdump
 export GDB=$(CROSS_COMPILE)gdb
 
 KERNEL_VER              := linux-3.10.49
+BUSYBOX_VER              := busybox-1.23.0
 TOP_DIR			:= $(shell pwd)
 KERNEL_DIR		:= $(TOP_DIR)/kernel
+BUSYBOX_DIR		:= $(TOP_DIR)/busybox
 BUILD_DIR		:= $(TOP_DIR)/build
 DL_DIR		        := $(TOP_DIR)/dl
 HOST_TOOLS_DIR		:= $(TOP_DIR)/hostTools/bin
@@ -31,7 +33,20 @@ IMAGE_NAME		:= som9331-squashfs-sysupgrade.bin
 
 export STAGING_DIR=$(BUILD_DIR)/staging
 
-.PHONY: kernel image
+.PHONY: kernel image busybox
+
+busybox:
+	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER) ];then \
+		echo $(BUSYBOX_DIR) do not exist! ;\
+                if [ ! -f $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 ]; then \
+                        wget -P $(DL_DIR) http://busybox.net/downloads/$(BUSYBOX_VER).tar.bz2; \
+                fi \
+	fi
+         
+	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER) ];then \
+                tar -jxvf $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 -C $(BUSYBOX_DIR) ;\
+                ln -s $(BUSYBOX_DIR)/$(BUSYBOX_VER) $(BUSYBOX_DIR)/busybox ;\
+        fi
 
 kernel:
 	if [ ! -d $(KERNEL_DIR)/$(KERNEL_VER) ];then \
