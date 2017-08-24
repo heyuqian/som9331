@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright (C) 2009-2015 Free Software Foundation, Inc.
+# Copyright (C) 2009-2013 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@ import gdb
 import os
 import os.path
 
-pythondir = '/home/vagrant/openwrt/staging_dir/toolchain-mips_34kc_gcc-5.3.0_musl-1.1.14/share/gcc-5.3.0/python'
-libdir = '/home/vagrant/openwrt/staging_dir/toolchain-mips_34kc_gcc-5.3.0_musl-1.1.14/mips-openwrt-linux-musl/lib'
+pythondir = '/BB/build/ar71xx/generic/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/share/gcc-4.8.3/python'
+libdir = '/BB/build/ar71xx/generic/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/mips-openwrt-linux-uclibc/lib'
 
 # This file might be loaded when there is no current objfile.  This
 # can happen if the user loads it manually.  In this case we don't
@@ -55,7 +55,6 @@ if gdb.current_objfile () is not None:
     if not dir_ in sys.path:
         sys.path.insert(0, dir_)
 
-# Call a function as a plain import would not execute body of the included file
-# on repeated reloads of this object file.
-from libstdcxx.v6 import register_libstdcxx_printers
-register_libstdcxx_printers(gdb.current_objfile())
+# Load the pretty-printers.
+from libstdcxx.v6.printers import register_libstdcxx_printers
+register_libstdcxx_printers (gdb.current_objfile ())
