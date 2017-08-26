@@ -36,7 +36,7 @@ export STAGING_DIR=$(BUILD_DIR)/staging
 .PHONY: kernel image busybox
 
 busybox:
-	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER) ];then \
+	if [ ! -d $(BUSYBOX_DIR)/$(BUSYBOX_VER).tar.bz2 ];then \
 		echo $(BUSYBOX_DIR) do not exist! ;\
 		if [ ! -f $(DL_DIR)/$(BUSYBOX_VER).tar.bz2 ]; then \
 				wget -P $(DL_DIR) http://busybox.net/downloads/$(BUSYBOX_VER).tar.bz2; \
