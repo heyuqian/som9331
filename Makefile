@@ -104,6 +104,18 @@ kernel:
 	cp patches/m25p80.c kernel/linux/drivers/mtd/devices/m25p80.c
 	cp patches/xz_wrapper.c kernel/linux/fs/squashfs/xz_wrapper.c
 
+	#ethernet driver
+	cp -rf patches/ethernet_driver/atheros kernel/linux/drivers/net/ethernet/
+	cp patches/ethernet_driver/phy.c kernel/linux/drivers/net/phy/phy.c
+	cp patches/ethernet_driver/swconfig.c kernel/linux/drivers/net/phy/swconfig.c
+	cp patches/ethernet_driver/phy_Kconfig kernel/linux/drivers/net/phy/Kconfig
+	cp patches/ethernet_driver/phy_Makefile kernel/linux/drivers/net/phy/Makefile
+
+	cp patches/ethernet_driver/phy.h kernel/linux/include/linux/phy.h
+	cp patches/ethernet_driver/switch.h kernel/linux/include/linux/switch.h
+	cp patches/ethernet_driver/uapi_switch.h kernel/linux/include/uapi/linux/switch.h
+
+
 	make -C $(KERNEL_DIR)/linux
 
 tools:
