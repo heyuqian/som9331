@@ -13,6 +13,8 @@ mount -t devpts devpts /dev/pts
 echo /sbin/mdev > /proc/sys/kernel/hotplug
 mdev -s
 
+mount -t jffs2 /dev/mtdblock3 /var
+
 for i in /etc/init.d/S?* ; do 
 	# ignore dangling symlinks (if any) 
 	[ ! -f "$i" ] && continue 
