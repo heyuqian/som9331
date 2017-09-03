@@ -118,13 +118,23 @@ kernel:
 
 	make -C $(KERNEL_DIR)/linux
 
+kernel_install:
+	#vmlinux
+	cp -rf $(KERNEL_DIR)/linux/vmlinux $(BUILD_DIR)/vmlinux 
+	#usb
+	cp -rf $(KERNEL_DIR)/linux/fs/nls/nls_base.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/usb/core/usbcore.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/usb/usb-common.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/usb/host/ehci-hcd.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/usb/host/ehci-platform.ko $(ROOTFS_DIR)/lib/modules
+
+
 tools:
 	make -C $(HOST_TOOLS_DIR)/../ all
 
 
-image:
+image: kernel_install
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
-	cp -rf $(KERNEL_DIR)/linux/vmlinux $(BUILD_DIR)/vmlinux 
 
 	$(OBJCOPY) -O binary -R .reginfo -R .notes -R .note -R .comment -R .mdebug -R .note.gnu.build-id -S  $(BUILD_DIR)/vmlinux  $(BUILD_DIR)/vmlinux
 
