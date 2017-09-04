@@ -134,6 +134,9 @@ tools:
 
 
 image: kernel_install
+	find  $(ROOTFS_DIR)/lib/modules -name *.ko | xargs -n 1 $(OBJCOPY) --strip-debug
+	find  $(ROOTFS_DIR)/lib/ -name *.so* | xargs -n 1 $(STRIP) --strip-debug
+
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
 
 	$(OBJCOPY) -O binary -R .reginfo -R .notes -R .note -R .comment -R .mdebug -R .note.gnu.build-id -S  $(BUILD_DIR)/vmlinux  $(BUILD_DIR)/vmlinux
