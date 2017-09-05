@@ -14,7 +14,7 @@ this project is to porting linux system to support som9331
 
 include  kernel、busybox、rootfs and so on
 
-How-TO:
+HOW-TO:
 
 my system is centos-7.0 x86_64
 
@@ -47,3 +47,5 @@ make image
 build/som9331-squashfs-sysupgrade.bin
 
 Ps: if have any problem with this project, feel free to contact with me: heyuqian2013@163.com
+
+    i have write some articles to summarize this project, you can find them: http://blog.csdn.net/heyuqian_csdn
