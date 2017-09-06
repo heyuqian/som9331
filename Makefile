@@ -78,6 +78,8 @@ kernel:
 	cp patches/dev-eth.c kernel/linux/arch/mips/ath79/
 	cp patches/ath79_Kconfig  kernel/linux/arch/mips/ath79/Kconfig
 	cp patches/ath79_Makefile kernel/linux/arch/mips/ath79/Makefile
+
+	#kernel config
 	cp patches/som9331_config kernel/linux/.config
 
 	cp patches/ag71xx_platform.h kernel/linux/arch/mips/include/asm/mach-ath79/
@@ -127,7 +129,14 @@ kernel_install:
 	cp -rf $(KERNEL_DIR)/linux/drivers/usb/usb-common.ko $(ROOTFS_DIR)/lib/modules
 	cp -rf $(KERNEL_DIR)/linux/drivers/usb/host/ehci-hcd.ko $(ROOTFS_DIR)/lib/modules
 	cp -rf $(KERNEL_DIR)/linux/drivers/usb/host/ehci-platform.ko $(ROOTFS_DIR)/lib/modules
-
+	#wireless
+	cp -rf $(KERNEL_DIR)/linux/net/mac80211/mac80211.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/net/wireless/cfg80211.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/net/wireless/ath/ath.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/net/wireless/ath/ath9k/ath9k.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/net/wireless/ath/ath9k/ath9k_common.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(KERNEL_DIR)/linux/drivers/net/wireless/ath/ath9k/ath9k_hw.ko $(ROOTFS_DIR)/lib/modules
+	
 
 tools:
 	make -C $(HOST_TOOLS_DIR)/../ all
