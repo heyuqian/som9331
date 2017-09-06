@@ -76,6 +76,8 @@ kernel:
 	cp patches/dev-m25p80.c kernel/linux/arch/mips/ath79/
 	cp patches/dev-eth.h kernel/linux/arch/mips/ath79/
 	cp patches/dev-eth.c kernel/linux/arch/mips/ath79/
+	cp patches/dev-wmac.c kernel/linux/arch/mips/ath79/
+	cp patches/dev-wmac.h kernel/linux/arch/mips/ath79/
 	cp patches/ath79_Kconfig  kernel/linux/arch/mips/ath79/Kconfig
 	cp patches/ath79_Makefile kernel/linux/arch/mips/ath79/Makefile
 
