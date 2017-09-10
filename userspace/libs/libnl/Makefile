@@ -3,13 +3,14 @@ PKG_SOURCE		:= $(PKG_NAME).tar.gz
 PKG_SOURCE_URL		:= http://www.infradead.org/~tgr/libnl/files/$(PKG_SOURCE)
 PKG_UNTAR		:= tar -zxvf
 
-export CC		= /opt/toolchains/OpenWrt-Toolchain-ar71xx-for-mips_34kc-gcc-4.8-linaro_uClibc-0.9.33.2/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin/mips-openwrt-linux-gcc
+#export CC		= /opt/toolchains/OpenWrt-Toolchain-ar71xx-for-mips_34kc-gcc-4.8-linaro_uClibc-0.9.33.2/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/bin/mips-openwrt-linux-gcc
 export CFLAGS		+= 
-export LDFLAGS		+= -L/opt/toolchains/OpenWrt-Toolchain-ar71xx-for-mips_34kc-gcc-4.8-linaro_uClibc-0.9.33.2/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2/lib
+export LDFLAGS		+= -L$(TOOLCHAIN_DIR)/lib
 export LIBS		+= -ldl
 
 CUR_DIR			:= $(shell pwd)
-PKG_CONFIG		= ./configure --host=mips-openwrt-linux  --prefix=$(CUR_DIR)/install 
+MAKE_DIR                = $(CUR_DIR)/$(PKG_NAME)/
+PKG_CONFIG		= cd $(MAKE_DIR); ./configure --host=mips-openwrt-linux  --prefix=$(CUR_DIR)/install
 
 export 	Q		:= @
 
@@ -24,10 +25,11 @@ check_untar_patch:
 			wget -P $(CUR_DIR) $(PKG_SOURCE_URL); \
 		fi ;\
 		$(PKG_UNTAR) $(PKG_SOURCE) 2> /dev/null ;\
+		$(PKG_CONFIG);\
 	fi
 
 all: check_untar_patch
-	cd $(PKG_NAME); $(PKG_CONFIG); make; make install
+	cd $(PKG_NAME); make; make install
 
 clean:
 	cd $(PKG_NAME); make clean
