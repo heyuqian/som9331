@@ -14,7 +14,7 @@ PKG_CONFIG		= cd $(MAKE_DIR); ./configure --host=mips-openwrt-linux  --prefix=$(
 
 export 	Q		:= @
 
-.PHONY: all
+.PHONY: all install
 
 check_untar_patch:
 	mkdir -p $(CUR_DIR)/install
@@ -34,3 +34,6 @@ all: check_untar_patch
 clean:
 	cd $(PKG_NAME); make clean
 	rm -rf $(CUR_DIR)/install
+
+install:
+	cp -rf $(CUR_DIR)/install/lib/*.so* $(ROOTFS_DIR)/lib/

@@ -16,7 +16,7 @@ PKG_CONFIG		= $(CUR_DIR)/dopatch.sh $(CUR_DIR)/patches $(MAKE_DIR)
 
 export	Q		:= @
 
-.PHONY: all
+.PHONY: all install
 
 check_untar_patch:
 	mkdir -p $(CUR_DIR)/install
@@ -36,3 +36,21 @@ all: check_untar_patch
 clean:
 	cd $(MAKE_DIR); make clean
 	rm -rf $(CUR_DIR)/install
+
+install:
+	#vmlinux
+	cp -rf $(MAKE_DIR)/vmlinux $(BUILD_DIR)	
+	#usb
+	cp -rf $(MAKE_DIR)/fs/nls/nls_base.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/usb/core/usbcore.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/usb/usb-common.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/usb/host/ehci-hcd.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/usb/host/ehci-platform.ko $(ROOTFS_DIR)/lib/modules
+	#wireless
+	cp -rf $(MAKE_DIR)/net/mac80211/mac80211.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/net/wireless/cfg80211.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/net/wireless/ath/ath.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/net/wireless/ath/ath9k/ath9k.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/net/wireless/ath/ath9k/ath9k_common.ko $(ROOTFS_DIR)/lib/modules
+	cp -rf $(MAKE_DIR)/drivers/net/wireless/ath/ath9k/ath9k_hw.ko $(ROOTFS_DIR)/lib/modules
+	

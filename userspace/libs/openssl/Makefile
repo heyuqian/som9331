@@ -15,7 +15,7 @@ PKG_CONFIG		= cp $(CUR_DIR)/Configure $(MAKE_DIR); cd $(MAKE_DIR); ./Configure o
 
 export 	Q		:= @
 
-.PHONY: all
+.PHONY: all install
 
 check_untar_patch:
 	mkdir -p $(CUR_DIR)/install
@@ -35,3 +35,6 @@ all: check_untar_patch
 clean:
 	cd $(PKG_NAME); make clean
 	rm -rf $(CUR_DIR)/install
+
+install:
+	#do nothing	

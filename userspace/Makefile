@@ -3,3 +3,9 @@ all:
 	make -C libs/openssl/ all
 	make -C apps/hostapd/ all
 	make -C apps/busybox/ all
+
+install:
+	make -C apps/busybox/ install
+	make -C apps/hostapd/ install
+	#make -C libs/openssl/ install
+	make -C libs/libnl/ install

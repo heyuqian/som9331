@@ -14,11 +14,9 @@ MAKE_DIR		= $(CUR_DIR)/$(PKG_NAME)/
 
 export 	Q		:= @
 
-.PHONY: all
+.PHONY: all install
 
 check_untar_patch:
-	mkdir -p $(CUR_DIR)/install
-
 	$(Q)if [ ! -d $(CUR_DIR)/$(PKG_NAME) ]; then \
 		if [ ! -f $(CUR_DIR)/$(PKG_SOURCE) ]; then \
 			echo $(PKG_SOURCE) do not exist! Download from $(PKG_SOURCE_URL); \
@@ -33,4 +31,7 @@ all: check_untar_patch
 
 clean:
 	cd $(MAKE_DIR); make clean
-	rm -rf $(CUR_DIR)/install
+
+install:
+	cp -rf $(MAKE_DIR)/_install/* $(ROOTFS_DIR)/
+	

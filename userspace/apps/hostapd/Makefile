@@ -15,7 +15,7 @@ export BINDIR		= $(CUR_DIR)/install/
 
 export 	Q		:= @
 
-.PHONY: all
+.PHONY: all install
 
 check_untar_patch:
 	mkdir -p $(CUR_DIR)/install
@@ -35,3 +35,6 @@ all: check_untar_patch
 clean:
 	cd $(MAKE_DIR); make clean
 	rm -rf $(CUR_DIR)/install
+
+install:
+	cp -rf $(CUR_DIR)/install/* $(ROOTFS_DIR)/sbin/
