@@ -37,4 +37,6 @@ clean:
 	rm -rf $(CUR_DIR)/install
 
 install:
+	$(OBJCOPY) $(CUR_DIR)/install/hostapd --strip-debug
+	$(OBJCOPY) $(CUR_DIR)/install/hostapd_cli --strip-debug
 	cp -rf $(CUR_DIR)/install/* $(ROOTFS_DIR)/sbin/

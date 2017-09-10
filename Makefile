@@ -46,15 +46,15 @@ userspace:
 userspace_install:
 	make -C $(USERSPACE_DIR) install
 
-image:
+image: 
 	find  $(ROOTFS_DIR)/lib/modules -name *.ko | xargs -n 1 $(OBJCOPY) --strip-debug
-	find  $(ROOTFS_DIR)/lib/ -name *.so* | xargs -n 1 $(STRIP) --strip-debug
+	find  $(ROOTFS_DIR)/lib/ -name *.so* | xargs -n 1 $(STRIP)
 
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME)
 
-	$(OBJCOPY) -O binary -R .reginfo -R .notes -R .note -R .comment -R .mdebug -R .note.gnu.build-id -S  $(BUILD_DIR)/vmlinux  $(BUILD_DIR)/vmlinux
+	$(OBJCOPY) -O binary -R .reginfo -R .notes -R .note -R .comment -R .mdebug -R .note.gnu.build-id -S  $(BUILD_DIR)/vmlinux  $(BUILD_DIR)/vmlinux_strip
 
-	mv $(BUILD_DIR)/vmlinux $(BUILD_DIR)/som9331-kernel.bin
+	cp $(BUILD_DIR)/vmlinux_strip $(BUILD_DIR)/som9331-kernel.bin
 
 	#$(HOST_TOOLS_DIR)/patch-cmdline $(BUILD_DIR)/som9331-kernel.bin 'board=SOM9331  console=ttyATH0,115200'
 
@@ -69,5 +69,5 @@ image:
 	$(HOST_TOOLS_DIR)/mktplinkfw -H 0x07100001 -W 0x1 -F 8Mlzma -N OpenWrt -V r49295 -m 1 -k  $(BUILD_DIR)/som9331-kernel.bin -r  $(BUILD_DIR)/$(IMAGE_NAME) -o  $(BUILD_DIR)/$(IMAGE_NAME).new -j -X 0x40000 -a 0x4  -s 
 
 	rm -rf $(BUILD_DIR)/$(IMAGE_NAME) && mv $(BUILD_DIR)/$(IMAGE_NAME).new $(BUILD_DIR)/$(IMAGE_NAME) 
-	rm -rf $(BUILD_DIR)/root.squashfs
+	#rm -rf $(BUILD_DIR)/root.squashfs
 	rm -rf $(BUILD_DIR)/som9331-kernel.bin	
