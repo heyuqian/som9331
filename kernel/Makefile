@@ -40,6 +40,10 @@ clean:
 install:
 	#vmlinux
 	cp -rf $(MAKE_DIR)/vmlinux $(BUILD_DIR)	
+	#network
+	cp -rf $(MAKE_DIR)/net/netfilter/nf_conntrack.ko $(ROOTFS_DIR)/lib/modules/
+	cp -rf $(MAKE_DIR)/net/ipv4/netfilter/nf_defrag_ipv4.ko $(ROOTFS_DIR)/lib/modules/
+	cp -rf $(MAKE_DIR)/net/ipv6/netfilter/nf_defrag_ipv6.ko $(ROOTFS_DIR)/lib/modules/
 	#usb
 	cp -rf $(MAKE_DIR)/fs/nls/nls_base.ko $(ROOTFS_DIR)/lib/modules
 	cp -rf $(MAKE_DIR)/drivers/usb/core/usbcore.ko $(ROOTFS_DIR)/lib/modules

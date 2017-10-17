@@ -4,6 +4,11 @@
  
 echo "Load modules..." 
 
+echo "network related"
+insmod /lib/modules/nf_conntrack.ko
+insmod /lib/modules/nf_defrag_ipv4.ko
+insmod /lib/modules/nf_defrag_ipv6.ko
+
 echo "usb related" 
 insmod /lib/modules/nls_base.ko
 insmod /lib/modules/usb-common.ko
