@@ -46,18 +46,21 @@ userspace:
 	#make -C $(USERSPACE_DIR)/libs/openssl/ all
 	make -C $(USERSPACE_DIR)/apps/hostapd/ all
 	make -C $(USERSPACE_DIR)/apps/busybox/ all
+	make -C $(USERSPACE_DIR)/apps/rzsz/ all
 
 userspace_install:
 	make -C $(USERSPACE_DIR)/libs/libnl/ install
 	#make -C $(USERSPACE_DIR)/libs/openssl/ install
 	make -C $(USERSPACE_DIR)/apps/hostapd/ install
 	make -C $(USERSPACE_DIR)/apps/busybox/ install
+	make -C $(USERSPACE_DIR)/apps/rzsz install
 
 userspace_clean:
 	make -C $(USERSPACE_DIR)/libs/libnl/ clean
 	#make -C $(USERSPACE_DIR)/libs/openssl/ clean
 	make -C $(USERSPACE_DIR)/apps/hostapd/ clean
 	make -C $(USERSPACE_DIR)/apps/busybox/ clean
+	make -C $(USERSPACE_DIR)/apps/rzsz clean
 image: 
 	find  $(ROOTFS_DIR)/lib/modules -name *.ko | xargs -n 1 $(OBJCOPY) --strip-debug
 	find  $(ROOTFS_DIR)/lib/ -name *.so* | xargs -n 1 $(STRIP)
