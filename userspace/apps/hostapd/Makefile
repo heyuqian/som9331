@@ -33,8 +33,10 @@ all: check_untar_patch
 	cd $(MAKE_DIR); make; make install
 
 clean:
-	cd $(MAKE_DIR); make clean
-	rm -rf $(CUR_DIR)/install
+	if [ -d $(MAKE_DIR) ]; then \
+		cd $(MAKE_DIR); make clean; \
+		rm -rf $(CUR_DIR)/install; \
+	fi ;
 
 install:
 	$(OBJCOPY) $(CUR_DIR)/install/hostapd --strip-debug

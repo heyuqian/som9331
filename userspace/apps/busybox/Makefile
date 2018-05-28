@@ -30,7 +30,9 @@ all: check_untar_patch
 	cd $(MAKE_DIR); make; make install
 
 clean:
-	cd $(MAKE_DIR); make clean
+	if [ -d $(MAKE_DIR) ]; then \
+		cd $(MAKE_DIR); make clean; \
+	fi;
 
 install:
 	cp -rf $(MAKE_DIR)/_install/* $(ROOTFS_DIR)/

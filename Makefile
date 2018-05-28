@@ -21,11 +21,12 @@ TOP_DIR			= $(shell pwd)
 export BUILD_DIR	= $(TOP_DIR)/build
 export STAGING_DIR      = $(BUILD_DIR)/staging
 export ROOTFS_DIR       = $(TOP_DIR)/rootfs
+export PKG_CONFIG_PATH  = $(TOP_DIR)/userspace/libs/libnl/install/lib/pkgconfig/
 
 export 	Q		:= @
 
 KERNEL_DIR		= $(TOP_DIR)/kernel
-USERSPACE_DIR		= $(TOP_DIR)/userspace 
+USERSPACE_DIR		= $(TOP_DIR)/userspace
 
 IMAGE_NAME		= som9331-squashfs-sysupgrade.bin
 HOST_TOOLS_DIR		= $(TOP_DIR)/hostTools/bin
@@ -41,11 +42,22 @@ kernel_install:
 	make -C $(KERNEL_DIR) install
 
 userspace:
-	make -C $(USERSPACE_DIR) all
+	make -C $(USERSPACE_DIR)/libs/libnl/ all
+	#make -C $(USERSPACE_DIR)/libs/openssl/ all
+	make -C $(USERSPACE_DIR)/apps/hostapd/ all
+	make -C $(USERSPACE_DIR)/apps/busybox/ all
 
 userspace_install:
-	make -C $(USERSPACE_DIR) install
+	make -C $(USERSPACE_DIR)/libs/libnl/ install
+	#make -C $(USERSPACE_DIR)/libs/openssl/ install
+	make -C $(USERSPACE_DIR)/apps/hostapd/ install
+	make -C $(USERSPACE_DIR)/apps/busybox/ install
 
+userspace_clean:
+	make -C $(USERSPACE_DIR)/libs/libnl/ clean
+	#make -C $(USERSPACE_DIR)/libs/openssl/ clean
+	make -C $(USERSPACE_DIR)/apps/hostapd/ clean
+	make -C $(USERSPACE_DIR)/apps/busybox/ clean
 image: 
 	find  $(ROOTFS_DIR)/lib/modules -name *.ko | xargs -n 1 $(OBJCOPY) --strip-debug
 	find  $(ROOTFS_DIR)/lib/ -name *.so* | xargs -n 1 $(STRIP)

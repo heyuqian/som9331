@@ -29,11 +29,14 @@ check_untar_patch:
 	fi
 
 all: check_untar_patch
+	echo $(PKG_CONFIG_PATH)
 	cd $(PKG_NAME); make; make install
 
 clean:
-	cd $(PKG_NAME); make clean
-	rm -rf $(CUR_DIR)/install
+	if [ -d $(PKG_NAME) ]; then \
+		cd $(PKG_NAME); make clean; \
+		rm -rf $(CUR_DIR)/install; \
+	fi;
 
 install:
 	cp -rf $(CUR_DIR)/install/lib/*.so* $(ROOTFS_DIR)/lib/
